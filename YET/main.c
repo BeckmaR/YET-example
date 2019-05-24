@@ -48,8 +48,6 @@ int main(int argc, char **argv) {
 	tictoc_init(&tictoc);
 	tictoc_enter(&tictoc);
 
-	tictocIface_raise_start(&tictoc);
-
 	struct timespec sleep;
 	sleep.tv_sec = 0;
 	sleep.tv_nsec = 1000;
