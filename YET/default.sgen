@@ -1,0 +1,11 @@
+GeneratorModel for yakindu::c::yet {
+
+	statechart tictoc {
+
+		feature Outlet {
+			targetProject = "YET"
+			targetFolder = "src-gen"
+			libraryTargetFolder = "src"
+		}
+	}
+}
