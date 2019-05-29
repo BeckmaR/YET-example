@@ -1,0 +1,134 @@
+testclass FullTestCoverage for statechart solution05 {
+
+	@Test
+	operation testInitialState () {
+		enter
+
+		assertOff
+
+		assert active (solution05.multi_click.idle)
+
+		exit
+	}
+
+	@Test
+	operation testActivatingMotion () {
+		enter
+
+		motionAndAssert
+
+		assert active (solution05.light_control.MotionIdle._region0.MotionOn)
+		assert wire.power == wire.FULL
+
+		exit
+	}
+
+	@Test
+	operation testDoubleMotion () {
+		enter
+
+		motionAndAssert
+		motionAndAssert
+
+		assert active (solution05.light_control.MotionIdle._region0.MotionOn)
+		assert wire.power == wire.FULL
+
+		exit
+	}
+
+	@Test
+	operation testDeactivatingAfter30s () {
+		enter
+		motionAndAssert
+		proceed 30 s
+
+		assertOff
+
+		exit
+	}
+
+	@Test
+	operation testActivatingLightControl () {
+		enter
+
+		pressButton
+
+		assert active (solution05.multi_click.clicking)
+
+		proceed 400 ms
+
+		assert active (solution05.light_control.On)
+		assert wire.power == wire.DIMMED
+
+		exit
+	}
+
+	@Test
+	operation testDeactivatingLightControl () {
+		enter
+
+		switchOnOff
+		switchOnOff
+
+		assertOff
+
+		exit
+	}
+	
+	@Test
+	operation testDoubleClicking () {
+		enter
+		
+		switchOnOff
+		
+		doubleClicking
+	
+		assert active (solution05.light_control.On)
+		assert wire.power == wire.FULL 
+	}
+	
+	@Test
+	operation testDoubleClickingAfterDoubleClicking () {
+		enter
+		
+		switchOnOff
+		
+		doubleClicking
+		doubleClicking
+		
+		assert active (solution05.light_control.On)
+		assert wire.power == wire.DIMMED
+	}
+
+	operation motionAndAssert () {
+		raise sensor.motion
+		proceed 1 cycle
+		assert active (solution05.light_control.MotionIdle._region0.MotionOn)
+		assert wire.power == wire.FULL
+	}
+
+	operation pressButton () {
+		raise button.down
+		proceed 1 cycle
+	}
+
+	operation switchOnOff () {
+		pressButton
+		proceed 400 ms
+	}
+	
+	operation doubleClicking () {
+		pressButton
+		pressButton
+		
+		assert active (solution05.multi_click.clicking)
+		
+		proceed 400 ms
+	}
+
+	operation assertOff () {
+		assert active (solution05.light_control.MotionIdle) 
+		assert active (solution05.light_control.MotionIdle._region0.Off)
+		assert wire.power == wire.OFF
+	}
+}

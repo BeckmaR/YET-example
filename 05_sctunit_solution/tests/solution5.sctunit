@@ -1,0 +1,98 @@
+testclass LessonSCTUnit for statechart solution05 {
+
+	/*
+	 * Check that the statemachine is in the state "clicking" after raising the event button.down.
+	 * After waiting for 400 milliseconds the statemachine should be in the states "idle" and "On" and the wire power should be DIMMED.
+	 * If you now raise the event "button.down" another time and wait for 400 milliseconds the statemachine should be in the state "Off" and the wire power should also be OFF.
+	 */
+	@Test
+	operation testActivatingDeactivatingLightControl () {
+		enter
+		
+		switchOnOff
+		
+		assert active (solution05.multi_click.idle)
+		assert active (solution05.light_control.On)
+		assert wire.power == wire.DIMMED
+		
+		switchOnOff
+		
+		assert active (solution05.light_control.MotionIdle._region0.Off)
+		assert wire.power == wire.OFF
+		
+		exit
+	}
+	
+	
+	/*
+	 * Check that the statemachine is in the state "MotionON" after you have raised the event sensor.motion and that the wire power is in FULL mode.
+	 * If you now raise the event sensor.motion again, the statemachine should remain in the state "MotionON" and the wire power sould also still be in FULL mode.
+	 * After this you wait 30s without doing anything, the statemachine should now be in the state "Off" and the wire power should also be OFF.
+	 */
+	@Test
+	operation testMotionControl () {
+		enter
+		
+		motionAndAssert
+		
+		motionAndAssert
+		
+		proceed 30s
+		
+		assert active (solution05.light_control.MotionIdle._region0.Off)
+		assert wire.power == wire.OFF
+		
+		exit
+	}
+	
+	
+	/*
+	 * Bring the statemachine in the state "On" (where the wire power is DIMMED) and raise the event button.down two times and wait for 400 milliseconds.
+	 * The statemachine should now still be in the state "On" but the wire power should now be FULL.
+	 * Repeat the doubleclicking and assert the statemachine is still in the state "On" and the wire power is now DIMMED.
+	 */
+	@Test
+	operation testDoubleclickBehavior () {
+		enter
+		
+		switchOnOff
+		
+		doubleClicking
+		assert active (solution05.light_control.On)
+		assert wire.power == wire.FULL
+		
+		doubleClicking
+		assert active (solution05.light_control.On)
+		assert wire.power == wire.DIMMED
+		
+		exit
+	}
+	
+	operation switchOnOff () {
+		raise button.down
+		proceed 1 cycle
+		
+		assert active (solution05.multi_click.clicking)
+		
+		proceed 400ms
+	}
+	
+	operation motionAndAssert () {
+		raise sensor.motion
+		proceed 1 cycle
+		
+		assert active (solution05.light_control.MotionIdle._region0.MotionOn)
+		assert wire.power == wire.FULL
+	}
+	
+	operation doubleClicking () {
+		pressButton
+		pressButton
+		proceed 400 ms
+	}
+	
+	operation pressButton () {
+		raise button.down
+		proceed 1 cycle
+	}
+}

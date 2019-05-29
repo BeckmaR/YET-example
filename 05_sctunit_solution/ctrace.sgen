@@ -1,0 +1,11 @@
+GeneratorModel for yakindu::c::yet {
+
+	statechart solution05 {
+
+		feature Outlet {
+			targetProject = "05_sctunit_solution"
+			targetFolder = "src-gen"
+			libraryTargetFolder = "src"
+		}
+	}
+}
