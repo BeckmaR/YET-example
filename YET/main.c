@@ -20,7 +20,11 @@
 
 Tictoc tictoc;
 
+FILE* tracefile;
+
 int main(int argc, char **argv) {
+	tracefile = fopen("trace.yet", "w");
+
 	uint16_t port;
 	char rcv_buffer[RCV_BUFFER_SIZE];
 	int rcv_byte_len;
@@ -66,6 +70,8 @@ int main(int argc, char **argv) {
 /*! Function to write YET messages somewhere, e.g. via serial. */
 void yet_write(char* buf, int len) {
 	print_udp_err(send_message(buf, len));
+	fputs(buf, tracefile);
+	fflush(tracefile);
 	puts(buf);
 }
 
